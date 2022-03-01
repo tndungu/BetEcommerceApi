@@ -1,5 +1,6 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
+using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Repository.EF;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace BetEcommerce.Service.Interfaces
 {
     public interface IUserService
     {
-        Task<ApiResponse> Authenticate(UserRequest userRequest);
-        Task<ApiResponse> Register(UserRequest user);
+        Task<UserResponse> Authenticate(UserRequest userRequest);
+        Task<bool> Register(UserRequest userRequest);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
+using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
@@ -25,42 +26,36 @@ namespace BetEcommerce.Service.Implementation
             _appSettings = appSettings.Value;
         }
 
-        public async Task<ApiResponse> Authenticate(UserRequest userRequest)
+        public async Task<UserResponse> Authenticate(UserRequest userRequest)
         {
             var user = _context.Users.Where(x => x.Email == userRequest.Email).FirstOrDefault();
             bool valid = false;
 
             if (user == null)
-                return new ApiResponse(HttpStatusCode.Unauthorized) { ResponseMessage = "Username or password incorrect" };
+                throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
 
             valid = VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt);
 
             if (!valid)
-                return new ApiResponse(HttpStatusCode.Unauthorized) { ResponseMessage = "Username or password incorrect" };
+                throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
 
             var tokenString = new TokenGen().GenerateTokenJWT(user.Id, user.Id, _appSettings.Secret);
 
-            return new ApiResponse(HttpStatusCode.OK)
+            return new UserResponse
             {
-                ResponseObject = new
-                {
-                    User = new
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        Token = tokenString
-                    }
-                }
+                Id = user.Id,
+                Email = user.Email,
+                Token = tokenString
             };
         }
-        public Task<ApiResponse> Register(UserRequest userRequest)
+        public async Task<bool> Register(UserRequest userRequest)
         {
             // validation
             if (string.IsNullOrWhiteSpace(userRequest.Password))
-                throw new AppException("Password is required");
+                throw new HttpException(HttpStatusCode.BadRequest,"Password is required");
 
             if (_context.Users.Any(x => x.Email == userRequest.Email))
-                throw new AppException(userRequest.Email + "\" is already exists");
+                throw new HttpException(HttpStatusCode.BadRequest,userRequest.Email + "\" is already exists");
 
             var user = JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(userRequest));
             byte[] passwordHash, passwordSalt;
@@ -70,9 +65,7 @@ namespace BetEcommerce.Service.Implementation
             user.PasswordSalt = passwordSalt;
 
             _context.Users.Add(user);
-            _context.SaveChangesAsync();
-
-            return Task.Run(() => new ApiResponse(HttpStatusCode.OK) { ResponseMessage = "User Created Successfully"});
+            return await _context.SaveChangesAsync() > 0;
         }
   
 

@@ -12,7 +12,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
     [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : V1Controller
     {
         private IUserService _userService;
 
@@ -23,31 +23,31 @@ namespace BetEcommerce.Api.Controllers.API.V1
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public Task<ApiResponse> Authenticate([FromBody] UserRequest userRequest)
+        public async Task<IActionResult> Authenticate([FromBody] UserRequest userRequest)
         {
             try
             {
-                return _userService.Authenticate(userRequest);
+                var response = _userService.Authenticate(userRequest);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse(HttpStatusCode.InternalServerError) { ResponseMessage = ex.Message };
-                return Task.Run(() => response);
+                return betServerError(ex);
             }
         }
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        public Task<ApiResponse> Register(UserRequest userRequest)
+        public async Task<IActionResult> Register(UserRequest userRequest)
         {
             try
             {
-                return _userService.Register(userRequest);
+                var response = await _userService.Register(userRequest);
+                return Ok(new ApiResponse<bool>().Success(response));
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse(HttpStatusCode.InternalServerError) { ResponseMessage = ex.Message };
-                return Task.Run(() => response);
+                return betServerError(ex);
             }
 
         }

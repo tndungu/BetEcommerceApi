@@ -7,21 +7,35 @@ using System.Threading.Tasks;
 
 namespace BetEcommerce.Model.API
 {
-    public class ApiResponse
+    public class ApiResponse<T>
     {
-        public HttpStatusCode HttpResponseCode { get; set; }
-        public string ResponseMessage { get; set; }
-        public object ResponseObject { get; set; }
+        public int statusCode { get; set; }
+        public string message { get; set; }
+        public T data { get; set; }
 
-        public ApiResponse(HttpStatusCode httpStatusCode, string responseMessage)
+        public ApiResponse<T> Success(T _data, string _message = "success")
         {
-            HttpResponseCode = httpStatusCode;
-            ResponseMessage = responseMessage;
+            return new ApiResponse<T> { data = _data, message = _message, statusCode = 200 };
         }
 
-        public ApiResponse(HttpStatusCode httpStatusCode)
+        public ApiResponse<T> BadRequest(T _data, string _message = "failed")
         {
-            HttpResponseCode = httpStatusCode;
+            return new ApiResponse<T> { data = _data, message = _message, statusCode = 400 };
+        }
+
+        public ApiResponse<T> NotFound(T _data, string _message = "not found")
+        {
+            return new ApiResponse<T> { data = _data, message = _message, statusCode = 404 };
+        }
+
+        public ApiResponse<T> Created(T _data, string _message = "created")
+        {
+            return new ApiResponse<T> { data = _data, message = _message, statusCode = 201 };
+        }
+
+        public ApiResponse<T> UnAthorised(T _data, string _message = "failed")
+        {
+            return new ApiResponse<T> { data = _data, message = _message, statusCode = 403 };
         }
     }
 }

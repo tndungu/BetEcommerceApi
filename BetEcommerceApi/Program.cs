@@ -23,6 +23,7 @@ builder.Services.AddDbContext<BetEcommerceDBContext>();
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 
