@@ -3,3 +3,16 @@
 ################################################################################
 
 /.vs/BetEcommerceApi
+/BetEcommerce.Api.Test/bin/Debug/net6.0
+/BetEcommerce.Api.Test/obj/Debug/net6.0
+/BetEcommerce.Api.Test/obj
+/BetEcommerce.Model/bin/Debug/net6.0
+/BetEcommerce.Model/obj/Debug/net6.0
+/BetEcommerce.Model/obj
+/BetEcommerce.Repository/bin/Debug/net6.0
+/BetEcommerce.Repository/obj/Debug/net6.0
+/BetEcommerce.Repository/obj
+/BetEcommerce.Service/bin/Debug/net6.0
+/BetEcommerce.Service/obj
+/BetEcommerceApi/bin/Debug/net6.0
+/BetEcommerceApi/obj
