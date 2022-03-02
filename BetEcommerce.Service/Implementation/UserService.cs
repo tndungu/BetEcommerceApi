@@ -67,8 +67,12 @@ namespace BetEcommerce.Service.Implementation
             _context.Users.Add(user);
             return await _context.SaveChangesAsync() > 0;
         }
-  
 
+        public User GetById(int id)
+        {
+            var user = _context.Users.Where(x => x.Id == id).FirstOrDefault();
+            return user;
+        }
         #region Private Methods
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

@@ -14,5 +14,6 @@ namespace BetEcommerce.Service.Interfaces
     {
         Task<UserResponse> Authenticate(UserRequest userRequest);
         Task<bool> Register(UserRequest userRequest);
+        User GetById(int id);
     }
 }
