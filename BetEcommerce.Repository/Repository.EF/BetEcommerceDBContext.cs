@@ -40,8 +40,8 @@ namespace BetEcommerce.Repository.Repository.EF
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrdersItem { get; set;}
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<CartItem> CartsItem { get; set; }
+        public DbSet<Cart> Cart { get; set; }
+        public DbSet<CartItem> CartItem { get; set; }
 
     }
 }

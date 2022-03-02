@@ -4,6 +4,7 @@ using BetEcommerce.Repository.Repository.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetEcommerce.Repository.Migrations
 {
     [DbContext(typeof(BetEcommerceDBContext))]
-    partial class BetEcommerceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220302131004_TableRename")]
+    partial class TableRename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

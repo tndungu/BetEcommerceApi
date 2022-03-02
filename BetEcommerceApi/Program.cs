@@ -78,6 +78,7 @@ builder.Services.AddAuthentication(x =>
 });
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService,CartService>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

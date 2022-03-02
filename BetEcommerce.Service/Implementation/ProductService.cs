@@ -29,7 +29,7 @@ namespace BetEcommerce.Service.Implementation
 
             ProductListViewModel result = new()
             {
-                NextPointer = products.Any() ? products.LastOrDefault()?.Id : 0,
+                NextPointer = products.Any() ? products.LastOrDefault()?.Id : -1,
                 Products = JsonConvert.DeserializeObject<List<ProductViewModel>>(JsonConvert.SerializeObject(products))
             };
 
