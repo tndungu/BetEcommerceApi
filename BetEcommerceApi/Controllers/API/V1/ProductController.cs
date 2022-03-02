@@ -20,8 +20,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
             _productService = productService;
         }
 
-        [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("GetProducts")]
         [ProducesResponseType(typeof(ProductListViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         public ActionResult GetProducts([FromBody] PointerParams PointerParams)

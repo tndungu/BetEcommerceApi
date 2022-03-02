@@ -1,4 +1,5 @@
 ﻿using BetEcommerce.Model.Request;
+using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
@@ -44,6 +45,23 @@ namespace BetEcommerce.Service.Implementation
             _context.CartItem.Add(cartItem);
 
             return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<List<CartResponse>> GetCartItems(int userId)
+        {
+            var cartResponse = (from c in _context.Cart
+                                join ci in _context.CartItem on c.Id equals ci.CartId
+                                join p in _context.Products on ci.ProductId equals p.Id
+                                where c.UserId == userId
+
+                                select new CartResponse
+                                {
+                                    ImageId = p.ImageId,
+                                    ProductId = p.Id,
+                                    ProductName = p.Name,
+                                    Quantity = ci.quantity,
+                                    TotalPrice = ci.TotalPrice
+                                }).ToList();
+            return cartResponse;
         }
     }
 }

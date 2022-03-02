@@ -1,5 +1,6 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
+using BetEcommerce.Model.Response;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
         {
             _cartService = cartService;
         }
-        [HttpPost]
+        [HttpPost("AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] CartRequest Cart)
         {
             try
@@ -32,5 +33,20 @@ namespace BetEcommerce.Api.Controllers.API.V1
             }
         }
 
+        [HttpGet("GetCartItems")]
+        public async Task<IActionResult> GetCartItems([FromQuery] int userId)
+        {
+            try
+            {
+                var user = User.Identity.Name;
+                var response = await _cartService.GetCartItems(userId);
+                return Ok(new ApiResponse<List<CartResponse>>().Success(response));
+            }
+            catch(Exception ex)
+            {
+                return betServerError(ex);
+            }
+        }
+        
     }
 }
