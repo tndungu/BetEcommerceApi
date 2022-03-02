@@ -1,6 +1,6 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
-using BetEcommerce.Repository.Repository.EF;
+using BetEcommerce.Model.Response;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +19,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
             _productService = productService;
         }
         [HttpGet]
-        [ProducesResponseType(typeof(List<Product>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProductListViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetProducts([FromQuery] PointerParams @params)
         {
@@ -27,8 +27,8 @@ namespace BetEcommerce.Api.Controllers.API.V1
             {
                 if (ModelState.IsValid)
                 {
-                    var response = _productService.GetProducts();
-                    return Ok(new ApiResponse<List<Product>>().Success(response.Result));
+                    var response = _productService.GetProducts(@params);
+                    return Ok(new ApiResponse<ProductListViewModel>().Success(response.Result));
                 }
                 return BadRequest(new ApiResponse<bool>().BadRequest(false));
             }

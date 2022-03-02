@@ -1,5 +1,6 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
+using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -27,8 +28,8 @@ namespace BetEcommerce.Api.Controllers.API.V1
         {
             try
             {
-                var response = _userService.Authenticate(userRequest);
-                return Ok(response);
+                var response = await _userService.Authenticate(userRequest);
+                return Ok(new ApiResponse<UserResponse>().Success(response));
             }
             catch (Exception ex)
             {
@@ -49,7 +50,6 @@ namespace BetEcommerce.Api.Controllers.API.V1
             {
                 return betServerError(ex);
             }
-
         }
     }
 }

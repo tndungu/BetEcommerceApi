@@ -5,15 +5,20 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Api", "BetEcommerceApi\BetEcommerce.Api.csproj", "{C7BF4D61-2686-478B-9D69-76C0AD726389}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetEcommerce.Service", "BetEcommerce.Service\BetEcommerce.Service.csproj", "{79B21A27-06B1-4F20-B96F-42B7B2266F59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Service", "BetEcommerce.Service\BetEcommerce.Service.csproj", "{79B21A27-06B1-4F20-B96F-42B7B2266F59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetEcommerce.Repository", "BetEcommerce.Repository\BetEcommerce.Repository.csproj", "{F02A113D-9735-4BC8-9185-30AE31C6E4CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Repository", "BetEcommerce.Repository\BetEcommerce.Repository.csproj", "{F02A113D-9735-4BC8-9185-30AE31C6E4CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7ED89940-2FA9-4630-893E-780A39E82CD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetEcommerce.Api.Test", "BetEcommerce.Api.Test\BetEcommerce.Api.Test.csproj", "{088350A0-E5AF-4CBE-9B3B-3723A6249AEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Api.Test", "BetEcommerce.Api.Test\BetEcommerce.Api.Test.csproj", "{088350A0-E5AF-4CBE-9B3B-3723A6249AEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetEcommerce.Model", "BetEcommerce.Model\BetEcommerce.Model.csproj", "{1B75F238-12DA-4A66-9DE3-CCD4EF7D979F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Model", "BetEcommerce.Model\BetEcommerce.Model.csproj", "{1B75F238-12DA-4A66-9DE3-CCD4EF7D979F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{960DD8E6-2842-4A31-B0FC-B7EF5CDF30DB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

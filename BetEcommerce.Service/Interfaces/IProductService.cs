@@ -1,4 +1,6 @@
-﻿using BetEcommerce.Repository.Repository.EF;
+﻿using BetEcommerce.Model.Request;
+using BetEcommerce.Model.Response;
+using BetEcommerce.Repository.Repository.EF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,6 @@ namespace BetEcommerce.Service.Interfaces
 {
     public interface IProductService
     {
-        Task<List<Product>> GetProducts();
+        Task<ProductListViewModel> GetProducts(PointerParams @params);
     }
 }
