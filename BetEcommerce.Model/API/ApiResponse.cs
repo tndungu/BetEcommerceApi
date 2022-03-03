@@ -22,6 +22,10 @@ namespace BetEcommerce.Model.API
         {
             return new ApiResponse<T> { data = _data, message = _message, statusCode = 400 };
         }
+        public ApiResponse<T> UnAuthorized(T _data, string _message = "failed")
+        {
+            return new ApiResponse<T> { data = _data, message = _message, statusCode = 401 };
+        }
 
         public ApiResponse<T> NotFound(T _data, string _message = "not found")
         {

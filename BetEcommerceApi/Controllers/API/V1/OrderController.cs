@@ -1,11 +1,14 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetEcommerce.Api.Controllers.API.V1
 {
-    [Route("api/[controller]")]
+
+    [AllowAnonymous]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class OrderController : V1Controller
     {
@@ -15,8 +18,8 @@ namespace BetEcommerce.Api.Controllers.API.V1
         {
             _orderService = orderService;
         }
-        [HttpPost("Order")]
-        public async Task<IActionResult> Order([FromBody] int userId)
+        [HttpGet("Order")]
+        public async Task<IActionResult> Order([FromQuery] int userId)
         {
             try
             {

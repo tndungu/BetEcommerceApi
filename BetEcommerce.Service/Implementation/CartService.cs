@@ -27,22 +27,28 @@ namespace BetEcommerce.Service.Implementation
             if (product == null)
                 throw new HttpException(HttpStatusCode.NotFound, "Product not found");
 
-            //var cartUser = _context.Cart.Where(x => x.UserId == cart.UserId).FirstOrDefault();
-
-            var cartRecord = JsonConvert.DeserializeObject<Cart>(JsonConvert.SerializeObject(cart));
-            
-            _context.Cart.Add(cartRecord);
-            await _context.SaveChangesAsync();
-
-            var cartItem = new CartItem
+            Cart cartAdd = new Cart();
+            int cartId = 0;
+            cartAdd = _context.Cart.Where(x => x.UserId == cart.UserId).FirstOrDefault();
+            if(cartAdd == null)
             {
-                CartId = cartRecord.Id,
+                cartAdd.UserId = cart.UserId;
+                _context.Cart.Add(cartAdd);
+
+                await _context.SaveChangesAsync();
+                cartId = cartAdd.Id;
+            }else
+                cartId = cartAdd.Id;
+          
+            _context.CartItem.Add(
+                new CartItem
+            {
+                CartId = cartId,
                 ProductId = cart.ProductId,
                 quantity = cart.Quantity,
                 UnitPrice = product.price,
                 TotalPrice = product.price * cart.Quantity
-            };
-            _context.CartItem.Add(cartItem);
+            });
 
             return await _context.SaveChangesAsync() > 0;
         }

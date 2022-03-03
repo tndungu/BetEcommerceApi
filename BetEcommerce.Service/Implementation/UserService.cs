@@ -55,7 +55,7 @@ namespace BetEcommerce.Service.Implementation
                 throw new HttpException(HttpStatusCode.BadRequest,"Password is required");
 
             if (_context.Users.Any(x => x.Email == userRequest.Email))
-                throw new HttpException(HttpStatusCode.BadRequest,userRequest.Email + "\" is already exists");
+                throw new HttpException(HttpStatusCode.BadRequest,$"{userRequest.Email} already exists");
 
             var user = JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(userRequest));
             byte[] passwordHash, passwordSalt;

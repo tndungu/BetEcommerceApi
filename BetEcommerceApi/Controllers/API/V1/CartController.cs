@@ -37,8 +37,8 @@ namespace BetEcommerce.Api.Controllers.API.V1
         public async Task<IActionResult> GetCartItems([FromQuery] int userId)
         {
             try
-            {
-                var user = User.Identity.Name;
+           {
+                //var user = User.Identity.Name;
                 var response = await _cartService.GetCartItems(userId);
                 return Ok(new ApiResponse<List<CartResponse>>().Success(response));
             }

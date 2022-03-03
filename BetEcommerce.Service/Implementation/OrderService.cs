@@ -23,21 +23,30 @@ namespace BetEcommerce.Service.Implementation
         }
         public async Task<bool> Order(int userId)
         {
-            var carts = _context.Cart.Where(x => x.UserId == userId).ToList();
-            carts.ForEach(async cart =>
-            {
-                var cartItems = _context.CartItem.Where(x => x.CartId == cart.Id).ToList();
-                int orderId = await AddCartToOrder(cart);
-                
-                await AddCartItemsToOrderItems(cartItems,orderId);
-                RemoveFromCart(cart);
-            });
+            
+                var cart = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
+                var cartItemList = _context.CartItem.Where(x => x.CartId == cart.Id).ToList();
 
-            var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var message = BuildMessage(userId);
+                var orderRecord = new Order
+                {
+                    UserId = userId,
+                    OrderNumber = $"1100{cart.Id}/2022",
+                };
+                _context.Orders.Add(orderRecord);
+                await _context.SaveChangesAsync();
 
-            _emailService.SendEmailAsync(message, user.Email);
-            return true;
+                var orderListItems = DeserializeCartItems(cartItemList,orderRecord.Id);
+                _context.OrdersItem.AddRange(orderListItems);
+                _context.CartItem.RemoveRange(cartItemList);
+                _context.Cart.RemoveRange(cart);
+
+                await _context.SaveChangesAsync();
+
+                var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+                var message = BuildMessage(userId);
+
+                _emailService.SendEmailAsync(message, user.Email);
+                return true;
         }
 
         public async Task<List<CartResponse>> GetOrderItems(int userId)
@@ -73,18 +82,22 @@ namespace BetEcommerce.Service.Implementation
             return message.ToString();
         }
 
-        private async Task<int> AddCartToOrder(Cart cart)
+        private List<OrderItem> DeserializeCartItems(List<CartItem> list, int orderId)
         {
-            var order = JsonConvert.DeserializeObject<Order>(JsonConvert.SerializeObject(cart));
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-            return order.Id;
-        }
+            var item = JsonConvert.SerializeObject(list, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                    });
 
-        private async void RemoveFromCart(Cart cart)
-        {
-            _context.Cart.Remove(cart);
-            _context.SaveChanges();
+            var orderListItems = JsonConvert.DeserializeObject<List<OrderItem>>(item);
+
+            foreach (var orderItem in orderListItems)
+            {
+                orderItem.OrderId = orderId;
+                orderItem.Id = 0;
+            }
+            return orderListItems;
         }
 
         private async Task<bool> AddCartItemsToOrderItems(List<CartItem> items, int orderId)
