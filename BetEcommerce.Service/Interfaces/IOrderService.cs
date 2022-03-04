@@ -9,7 +9,7 @@ namespace BetEcommerce.Service.Interfaces
 {
     public interface IOrderService
     {
-        Task<bool> Order(int userId);
-        Task<List<CartResponse>> GetOrderItems(int userId);
+        Task<bool> Order();
+        Task<List<CartResponse>> GetOrderItems();
     }
 }

@@ -3,7 +3,9 @@ using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Implementation;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 
@@ -78,11 +80,14 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = false
     };
 });
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IOrderService,OrderService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -96,10 +101,15 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("../swagger/v1/swagger.json", "BET Ecommerce api");
     });
 }
-app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
+app.UseAuthentication();
+app.UseRouting();
 
 app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.MapControllers();
 

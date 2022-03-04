@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BetEcommerce.Api.Controllers.API.V1
 {
-    [AllowAnonymous]
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class ProductController : V1Controller

@@ -3,6 +3,8 @@ using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,30 +18,33 @@ namespace BetEcommerce.Service.Implementation
     public class CartService : ICartService
     {
         private readonly BetEcommerceDBContext _context;
-        public CartService(BetEcommerceDBContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CartService(BetEcommerceDBContext context,IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> AddToCart(CartRequest cart)
+        public async Task<int> AddToCart(CartRequest cart)
         {
             var product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
             if (product == null)
                 throw new HttpException(HttpStatusCode.NotFound, "Product not found");
-
+            
+            int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
             Cart cartAdd = new Cart();
             int cartId = 0;
-            cartAdd = _context.Cart.Where(x => x.UserId == cart.UserId).FirstOrDefault();
-            if(cartAdd == null)
-            {
-                cartAdd.UserId = cart.UserId;
-                _context.Cart.Add(cartAdd);
 
+            var cartExist = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
+            if(cartExist == null)
+            {
+                cartAdd.UserId = userId;
+                _context.Cart.Add(cartAdd);
                 await _context.SaveChangesAsync();
                 cartId = cartAdd.Id;
             }else
-                cartId = cartAdd.Id;
-          
+                cartId = cartExist.Id;
+
             _context.CartItem.Add(
                 new CartItem
             {
@@ -50,14 +55,18 @@ namespace BetEcommerce.Service.Implementation
                 TotalPrice = product.price * cart.Quantity
             });
 
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+            int cartItemsCount = GetCartItemsCount(cartId);
+            return cartItemsCount;
         }
-        public async Task<List<CartResponse>> GetCartItems(int userId)
+        public async Task<List<CartResponse>> GetCartItems()
         {
+            var user = _httpContextAccessor.HttpContext.User.Identity.Name;
+
             var cartResponse = (from c in _context.Cart
                                 join ci in _context.CartItem on c.Id equals ci.CartId
                                 join p in _context.Products on ci.ProductId equals p.Id
-                                where c.UserId == userId
+                                where c.UserId == Convert.ToInt32(user)
 
                                 select new CartResponse
                                 {
@@ -68,6 +77,16 @@ namespace BetEcommerce.Service.Implementation
                                     TotalPrice = ci.TotalPrice
                                 }).ToList();
             return cartResponse;
+        }
+        public int GetCartItemsCount(int cartId)
+        {
+            int sum = 0;
+            var cartItems = _context.CartItem.Where(x => x.CartId == cartId).ToList();
+            if (cartItems.Any())
+            {
+                sum = cartItems.Sum(x => x.quantity);
+            }
+            return sum;
         }
     }
 }

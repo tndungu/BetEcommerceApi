@@ -19,8 +19,8 @@ namespace BetEcommerce.Repository.Helpers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name,id.ToString()),
-                    new Claim(ClaimTypes.Role,role.ToString())
+                    new Claim(ClaimTypes.Name,id.ToString())
+                    //new Claim(ClaimTypes.Role,role.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

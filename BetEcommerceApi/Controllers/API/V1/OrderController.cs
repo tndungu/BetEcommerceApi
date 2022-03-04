@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BetEcommerce.Api.Controllers.API.V1
 {
 
-    [AllowAnonymous]
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class OrderController : V1Controller
@@ -19,11 +19,11 @@ namespace BetEcommerce.Api.Controllers.API.V1
             _orderService = orderService;
         }
         [HttpGet("Order")]
-        public async Task<IActionResult> Order([FromQuery] int userId)
+        public async Task<IActionResult> Order()
         {
             try
             {
-                var response = await _orderService.Order(userId);
+                var response = await _orderService.Order();
                 return Ok(new ApiResponse<bool>().Success(response));
             }
             catch (Exception ex)

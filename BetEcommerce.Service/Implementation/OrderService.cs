@@ -2,6 +2,7 @@
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,13 +17,19 @@ namespace BetEcommerce.Service.Implementation
     {
         private readonly BetEcommerceDBContext _context;
         private readonly IEmailService _emailService;
-        public OrderService(BetEcommerceDBContext context, IEmailService emailService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public OrderService(BetEcommerceDBContext context, 
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
+            )
         {
             _context = context;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<bool> Order(int userId)
+        public async Task<bool> Order()
         {
+            int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
             
                 var cart = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
                 var cartItemList = _context.CartItem.Where(x => x.CartId == cart.Id).ToList();
@@ -43,14 +50,15 @@ namespace BetEcommerce.Service.Implementation
                 await _context.SaveChangesAsync();
 
                 var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-                var message = BuildMessage(userId);
+                var message = BuildMessage();
 
                 _emailService.SendEmailAsync(message, user.Email);
                 return true;
         }
 
-        public async Task<List<CartResponse>> GetOrderItems(int userId)
+        public async Task<List<CartResponse>> GetOrderItems()
         {
+            int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
             var cartResponse = (from c in _context.Orders
                                 join ci in _context.OrdersItem on c.Id equals ci.OrderId
                                 join p in _context.Products on ci.ProductId equals p.Id
@@ -66,9 +74,9 @@ namespace BetEcommerce.Service.Implementation
                                 }).ToList();
             return cartResponse;
         }
-        private string BuildMessage(int userId)
+        private string BuildMessage()
         {
-            var orderItems = GetOrderItems(userId).Result;
+            var orderItems = GetOrderItems().Result;
             var totalAmount = 0m;
 
             var message = new StringBuilder($"<h2>ORDER NUMBER: BET_{orderItems[0].OrderId}</h2>");
@@ -84,12 +92,7 @@ namespace BetEcommerce.Service.Implementation
 
         private List<OrderItem> DeserializeCartItems(List<CartItem> list, int orderId)
         {
-            var item = JsonConvert.SerializeObject(list, Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                    });
-
+            var item = JsonConvert.SerializeObject(list);
             var orderListItems = JsonConvert.DeserializeObject<List<OrderItem>>(item);
 
             foreach (var orderItem in orderListItems)
