@@ -41,6 +41,7 @@ builder.Services.AddDbContext<BetEcommerceDBContext>();
 
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 //Configure JWT authentication
 var appSettings = appSettingsSection.Get<AppSettings>();
 var key = Encoding.ASCII.GetBytes(appSettings.Secret);

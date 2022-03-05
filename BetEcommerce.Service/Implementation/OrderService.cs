@@ -25,10 +25,10 @@ namespace BetEcommerce.Service.Implementation
         }
         public async Task<bool> Order()
         {
-            int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
+            int userId = GetUserId();
 
             var cart = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
-            
+
             var orderRecord = new Order
             {
                 UserId = userId,
@@ -36,14 +36,13 @@ namespace BetEcommerce.Service.Implementation
             };
             _context.Orders.Add(orderRecord);
             await _context.SaveChangesAsync();
-
-            _orderItemService.MoveCartItemsToOrderItems( cart.Id,orderRecord.Id);
+            var message = BuildMessage();
+            await _orderItemService.MoveCartItemsToOrderItems(cart.Id, orderRecord.Id);
             _context.Cart.Remove(cart);
 
             await _context.SaveChangesAsync();
 
             var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var message = BuildMessage();
 
             _emailService.SendEmailAsync(message, user.Email);
             return true;
@@ -52,18 +51,29 @@ namespace BetEcommerce.Service.Implementation
         private string BuildMessage()
         {
             var orderItems = _orderItemService.GetOrderItems().Result;
+            var orderNumber = GetOrderNumber();
             var totalAmount = 0m;
 
-            var message = new StringBuilder($"<h2>ORDER NUMBER: BET_{orderItems[0].OrderId}</h2>");
+            var message = new StringBuilder("<h2>Your BET Order Summary</h2>");
+            message.Append($"<h3>ORDER NUMBER: {orderNumber}</h3>");
+            
             message.Append("<table><tr><th>Product Name</th><th>Quantity</th><th>Price</th></tr>");
             orderItems.ForEach(item =>
             {
                 totalAmount += item.TotalPrice;
-
                 message.Append($"<tr><td>{item.ProductName}</td><td>{item.Quantity}</td><td>{item.TotalPrice}</td></tr>");
             });
             message.Append($"<tr><td>TOTAL AMOUNT</td><td></td><td><b>{totalAmount}</b></td></tr></table>");
             return message.ToString();
+        }
+        private string GetOrderNumber()
+        {
+            int userId = GetUserId();
+            return _context.Orders.Where(x => x.UserId == userId).FirstOrDefault()?.OrderNumber;
+        }
+        public int GetUserId()
+        {
+            return Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
         }
     }
 }

@@ -32,8 +32,8 @@ namespace BetEcommerce.Service.Implementation
         public async Task<List<CartResponse>> GetOrderItems()
         {
             int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
-            var cartResponse = (from c in _context.Orders
-                                join ci in _context.OrdersItem on c.Id equals ci.OrderId
+            var cartResponse = (from c in _context.Cart
+                                join ci in _context.CartItem on c.Id equals ci.CartId
                                 join p in _context.Products on ci.ProductId equals p.Id
                                 where c.UserId == userId
 
@@ -68,22 +68,5 @@ namespace BetEcommerce.Service.Implementation
             }
             return orderListItems;
         }
-        private async Task<bool> MoveCartItemsToOrderItems(List<CartItem> items, int orderId)
-        {
-            List<OrderItem> orderItems = new List<OrderItem>();
-
-            foreach (var item in items)
-            {
-                var orderItem = JsonConvert.DeserializeObject<OrderItem>(JsonConvert.SerializeObject(item));
-                orderItem.OrderId = orderId;
-                orderItems.Add(orderItem);
-            }
-
-            await _context.OrdersItem.AddRangeAsync(orderItems);
-            _context.CartItem.RemoveRange(items);
-
-            return await _context.SaveChangesAsync() > 0;
-        }
-
     }
 }
