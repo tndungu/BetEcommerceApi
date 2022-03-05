@@ -19,9 +19,13 @@ namespace BetEcommerce.Service.Implementation
     {
         private readonly BetEcommerceDBContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public CartService(BetEcommerceDBContext context,IHttpContextAccessor httpContextAccessor)
+        private readonly ICartItemService _cartItemService;
+        public CartService(BetEcommerceDBContext context,
+            ICartItemService cartItemService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _cartItemService = cartItemService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -32,12 +36,12 @@ namespace BetEcommerce.Service.Implementation
                 throw new HttpException(HttpStatusCode.NotFound, "Product not found");
             
             int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
-            Cart cartAdd = new Cart();
             int cartId = 0;
 
             var cartExist = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
             if(cartExist == null)
             {
+                Cart cartAdd = new Cart();
                 cartAdd.UserId = userId;
                 _context.Cart.Add(cartAdd);
                 await _context.SaveChangesAsync();
@@ -45,41 +49,12 @@ namespace BetEcommerce.Service.Implementation
             }else
                 cartId = cartExist.Id;
 
-            _context.CartItem.Add(
-                new CartItem
-            {
-                CartId = cartId,
-                ProductId = cart.ProductId,
-                quantity = cart.Quantity,
-                UnitPrice = product.price,
-                TotalPrice = product.price * cart.Quantity
-            });
-
-            await _context.SaveChangesAsync();
-            int cartItemsCount = GetCartItemsCount(cartId);
-            return cartItemsCount;
+            await _cartItemService.AddCartItem(cart, cartId, product.price);
+            return _cartItemService.GetCartItemsCount(cartId);
         }
-        public async Task<List<CartResponse>> GetCartItems()
+        public async Task<int> GetCartItemsCount()
         {
-            var user = _httpContextAccessor.HttpContext.User.Identity.Name;
-
-            var cartResponse = (from c in _context.Cart
-                                join ci in _context.CartItem on c.Id equals ci.CartId
-                                join p in _context.Products on ci.ProductId equals p.Id
-                                where c.UserId == Convert.ToInt32(user)
-
-                                select new CartResponse
-                                {
-                                    ImageId = p.ImageId,
-                                    ProductId = p.Id,
-                                    ProductName = p.Name,
-                                    Quantity = ci.quantity,
-                                    TotalPrice = ci.TotalPrice
-                                }).ToList();
-            return cartResponse;
-        }
-        public int GetCartItemsCount(int cartId)
-        {
+            var cartId = GetCartId().Result;
             int sum = 0;
             var cartItems = _context.CartItem.Where(x => x.CartId == cartId).ToList();
             if (cartItems.Any())
@@ -87,6 +62,46 @@ namespace BetEcommerce.Service.Implementation
                 sum = cartItems.Sum(x => x.quantity);
             }
             return sum;
+        }
+
+        public async Task<int> GetCartId()
+        {
+            int cartId = 0;
+            int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
+            var res = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
+            if(res != null)
+                cartId = res.Id;
+               
+            return cartId;
+        }
+
+        public async Task<bool> UpdateCart(CartRequest cart)
+        {
+            int cartId = GetCartId().Result;
+            if(cartId > 0)
+            {
+                var cartItem = _context.CartItem.Where(x => x.CartId == cartId && x.ProductId == cart.ProductId).FirstOrDefault();
+                if (cartItem != null)
+                {
+                    cartItem.quantity = cart.Quantity;
+                    _context.CartItem.Update(cartItem);
+                }
+            }
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> RemoveCartItem(int productId)
+        {
+            int cartId = GetCartId().Result;
+            if (cartId > 0)
+            {
+                var cartItem = _context.CartItem.Where(x => x.CartId == cartId && x.ProductId == productId).FirstOrDefault();
+                if (cartItem != null)
+                {
+                    _context.CartItem.Remove(cartItem);
+                }
+            }
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

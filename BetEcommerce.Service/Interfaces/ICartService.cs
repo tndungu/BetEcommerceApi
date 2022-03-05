@@ -11,6 +11,9 @@ namespace BetEcommerce.Service.Interfaces
     public interface ICartService
     {
         Task<int> AddToCart(CartRequest cart);
-        Task<List<CartResponse>> GetCartItems();
+        Task<int> GetCartId();
+        Task<int> GetCartItemsCount();
+        Task<bool> UpdateCart(CartRequest cart);
+        Task<bool> RemoveCartItem(int productId);
     }
 }

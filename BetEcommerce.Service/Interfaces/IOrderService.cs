@@ -10,6 +10,5 @@ namespace BetEcommerce.Service.Interfaces
     public interface IOrderService
     {
         Task<bool> Order();
-        Task<List<CartResponse>> GetOrderItems();
     }
 }
