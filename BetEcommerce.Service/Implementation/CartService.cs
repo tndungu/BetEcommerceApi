@@ -83,8 +83,14 @@ namespace BetEcommerce.Service.Implementation
                 var cartItem = _context.CartItem.Where(x => x.CartId == cartId && x.ProductId == cart.ProductId).FirstOrDefault();
                 if (cartItem != null)
                 {
-                    cartItem.quantity = cart.Quantity;
-                    _context.CartItem.Update(cartItem);
+                    var product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
+                    if(product != null)
+                    {
+                        cartItem.quantity = cart.Quantity;
+                        cartItem.UnitPrice = product.price;
+                        cartItem.TotalPrice = product.price * cart.Quantity;
+                        _context.CartItem.Update(cartItem);
+                    }
                 }
             }
             return await _context.SaveChangesAsync() > 0;
