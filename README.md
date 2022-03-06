@@ -1,8 +1,7 @@
 # BetEcommerceApi
 
 Ecommerce Backend API using .Net Core. 
-Its the backend for a complete Ecommerce Application that is built using React frontend, .Net Core API and MS SQL Server database. The front end is available 
-at https://github.com/tndungu/betecommerceapp.git Repository.
+Its the backend for a complete Ecommerce Application that is built using React frontend, .Net Core API and MS SQL Server database. The front end is available at https://github.com/tndungu/betecommerceapp.git Repository.
 
 ## TOOLS
 The middleware is built using .NET 6.0 Framework. Successful build has been tested using Visual Studio 2022 Community edition.
