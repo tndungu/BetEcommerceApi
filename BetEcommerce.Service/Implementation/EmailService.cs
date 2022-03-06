@@ -15,7 +15,7 @@ namespace BetEcommerce.Service.Implementation
     public class EmailService : IEmailService
     {
         private readonly MailSettings _mailSettings;
-        public EmailService(IConfiguration configuration,IOptions<MailSettings> mailSettings)
+        public EmailService(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;
         }
