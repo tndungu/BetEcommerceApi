@@ -87,7 +87,6 @@ builder.Services.AddScoped<ICartItemService,CartItemService>();
 builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-
 var app = builder.Build();
 app.UseHttpsRedirection();
 
