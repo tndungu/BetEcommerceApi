@@ -8,8 +8,8 @@ The middleware is built using .NET Core 6.0 Framework. Successful build has been
 
 ## Setup
 The following steps are for setting up locally
-1. Clone the repository using the command
-  git clone https://github.com/tndungu/BetEcommerceApi.git
+1. Clone the repository using the following command:
+  `git clone https://github.com/tndungu/BetEcommerceApi.git`
 2. In appsettings.json file in BetEcommerce.Api project, update the following:
   ConnectionStrings - Update the properties Server, User ID and Password to correspond to your local database environment.
   MailSettings - Update the SMTP details to correspond to the SMTP Mail provider that you will be using. The project has been tested using Gmail SMTP, other mail providers might
