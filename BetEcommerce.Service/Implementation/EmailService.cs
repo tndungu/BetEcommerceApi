@@ -1,14 +1,8 @@
 ﻿using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Service.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BetEcommerce.Service.Implementation
 {

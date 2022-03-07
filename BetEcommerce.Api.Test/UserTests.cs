@@ -23,13 +23,12 @@ namespace BetEcommerce.Api.Test
         [SetUp]
         public void Setup()
         {
-            UserServiceMock.Setup(x => x.Authenticate(new UserRequest { Email = "antony@gmail.com", Password = "Password1" }))
-                .ReturnsAsync(new
-                    UserResponse
+            UserServiceMock.Setup(x => x.Authenticate(new UserRequest { Email = "tmndungu@gmail.com", Password = "password" }))
+                .ReturnsAsync(new UserResponse
                 {
-                    Id = 1,
-                    Email = "antony@gmail.com",
-                    Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJyb2xlIjoiMSIsIm5iZiI6MTYxOTE4MTU3NCwiZXhwIjoxNjE5MjY3OTc0LCJpYXQiOjE2MTkxODE1NzR9.rNlh1m_vlYKL2_PdqtaZR2GFwKVYYV3_1EEe1cGZBww"
+                    Id = 3,
+                    Email = "tmndungu@gmail.com",
+                    Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjMiLCJuYmYiOjE2NDY2MzkzNjAsImV4cCI6MTY0NjcyNTc2MCwiaWF0IjoxNjQ2NjM5MzYwfQ.BVTrGA2yA7VkCCX4DAeIFM5jxRpDVMzkuDCenV9sUig"
                 });
         }
         [Test]
@@ -37,7 +36,7 @@ namespace BetEcommerce.Api.Test
         {
             UserController = new UserController(UserServiceMock.Object);
 
-            var result = await UserController.Authenticate(new UserRequest { Email = "antony@gmail.com", Password = "Password1" });
+            var result = await UserController.Authenticate(new UserRequest { Email = "tmndungu@gmail.com", Password = "password" });
 
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.OK, GetHttpStatusCode(result));

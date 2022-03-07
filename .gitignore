@@ -16,3 +16,7 @@
 /BetEcommerce.Service/obj
 /BetEcommerceApi/bin/Debug/net6.0
 /BetEcommerceApi/obj
+/BetEcommerce.Repository.Tests/obj
+/BetEcommerce.Service.Tests/bin/Debug/net6.0
+/BetEcommerce.Service.Tests/obj
+/BetEcommerce.Repository.Tests/bin/Debug/net6.0
