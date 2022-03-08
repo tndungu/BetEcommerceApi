@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BetEcommerce.Repository
 {
-    public class GenericRepository<T1, T2> : IGenericRepository<T1, T2> where T1 : class, new()
+    public abstract class GenericRepository<T1, T2> : IGenericRepository<T1, T2> where T1 : class, new()
     {
         protected BetEcommerceDBContext context;
 

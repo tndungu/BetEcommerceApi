@@ -1,16 +1,11 @@
 ﻿using BetEcommerce.Api.Controllers.API.V1;
+using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BetEcommerce.Api.Test
 {
@@ -22,38 +17,24 @@ namespace BetEcommerce.Api.Test
         [SetUp]
         public void Setup()
         {
-
         }
         [Test]
         public async Task should_Get_List_Of_Ten_Products()
         {
             //Arrange
-            var products = new ProductListViewModel();
-            ProductServiceMock.Setup(x => x.GetProducts(new PointerParams { Pointer = 1, Count = 10 }))
+            var req = new PointerParams { Pointer = 1, Count = 10 };
+            ProductServiceMock.Setup(x => x.GetProducts(req))
                 .ReturnsAsync(It.IsAny<ProductListViewModel>());
 
             ProductController = new ProductController(ProductServiceMock.Object);
+
             //Act
-            var req = new PointerParams { Pointer = 1, Count = 10 };
-            var result = ProductController.GetProducts(req);
+            var result = await ProductController.GetProducts(req) as OkObjectResult;
+            var response = result.Value as ApiResponse<ProductListViewModel>;
+            var data = response.data;
+
             //Assert
-            Assert.AreEqual(10, result);
-        }
-
-        public static HttpStatusCode GetHttpStatusCode(IActionResult functionResult)
-        {
-            try
-            {
-                return (HttpStatusCode)functionResult
-                    .GetType()
-                    .GetProperty("StatusCode")
-                    .GetValue(functionResult, null);
-            }
-            catch
-            {
-                return HttpStatusCode.InternalServerError;
-            }
-
+            Assert.AreEqual(10, data.Products.Count);
         }
     }
 }
