@@ -10,5 +10,6 @@ namespace BetEcommerce.Service.Interfaces
     public interface IOrderService
     {
         Task<bool> Order();
+        string GetOrderNumber();
     }
 }

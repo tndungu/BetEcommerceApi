@@ -1,5 +1,10 @@
+using BetEcommerce.Repository;
+using BetEcommerce.Repository.Cart;
 using BetEcommerce.Repository.Helpers;
+using BetEcommerce.Repository.Order;
+using BetEcommerce.Repository.Product;
 using BetEcommerce.Repository.Repository.EF;
+using BetEcommerce.Repository.User;
 using BetEcommerce.Service.Implementation;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,7 +42,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Provides documentation about BET Ecommerce api endpoints"
     });
 });
-builder.Services.AddDbContext<BetEcommerceDBContext>();
+builder.Services.AddDbContext<BetEcommerceDBContext>(ServiceLifetime.Transient);
 
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);
@@ -86,6 +91,12 @@ builder.Services.AddScoped<IOrderService,OrderService>();
 builder.Services.AddScoped<ICartItemService,CartItemService>();
 builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IOrderItemsRepository, OrderItemsRepository>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

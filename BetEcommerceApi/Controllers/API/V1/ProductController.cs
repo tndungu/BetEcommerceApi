@@ -23,14 +23,14 @@ namespace BetEcommerce.Api.Controllers.API.V1
         [HttpPost("GetProducts")]
         [ProducesResponseType(typeof(ProductListViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        public ActionResult GetProducts([FromBody] PointerParams PointerParams)
+        public async Task<ActionResult> GetProducts([FromBody] PointerParams PointerParams)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var response = _productService.GetProducts(PointerParams);
-                    return Ok(new ApiResponse<ProductListViewModel>().Success(response.Result));
+                    var response = await _productService.GetProducts(PointerParams);
+                    return Ok(new ApiResponse<ProductListViewModel>().Success(response));
                 }
                 return BadRequest(new ApiResponse<bool>().BadRequest(false));
             }

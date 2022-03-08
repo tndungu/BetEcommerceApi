@@ -1,41 +1,34 @@
-﻿using BetEcommerce.Model.API;
-using BetEcommerce.Model.Request;
+﻿using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
+using BetEcommerce.Repository.User;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BetEcommerce.Service.Implementation
 {
     public class UserService : IUserService
     {
-        private BetEcommerceDBContext _context;
+        private IUserRepository _userRepository;
         public readonly AppSettings _appSettings;
 
-        public UserService(BetEcommerceDBContext context, IOptions<AppSettings> appSettings)
+        public UserService(IUserRepository userRepository, IOptions<AppSettings> appSettings)
         {
-            _context = context;
+            _userRepository = userRepository;
             _appSettings = appSettings.Value;
         }
 
         public async Task<UserResponse> Authenticate(UserRequest userRequest)
         {
-            var user = _context.Users.Where(x => x.Email == userRequest.Email).FirstOrDefault();
-            bool valid = false;
-
+            var user = await _userRepository.FindUserByEmail(userRequest.Email);
             if (user == null)
                 throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
 
-            valid = VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt);
-
+            bool valid = VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt);
             if (!valid)
                 throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
 
@@ -50,11 +43,11 @@ namespace BetEcommerce.Service.Implementation
         }
         public async Task<bool> Register(UserRequest userRequest)
         {
-            // validation
             if (string.IsNullOrWhiteSpace(userRequest.Password))
                 throw new HttpException(HttpStatusCode.BadRequest,"Password is required");
 
-            if (_context.Users.Any(x => x.Email == userRequest.Email))
+            var userExists = await _userRepository.FindUserByEmail(userRequest.Email);
+            if (userExists != null)
                 throw new HttpException(HttpStatusCode.BadRequest,$"{userRequest.Email} already exists");
 
             var user = JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(userRequest));
@@ -64,13 +57,13 @@ namespace BetEcommerce.Service.Implementation
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            _context.Users.Add(user);
-            return await _context.SaveChangesAsync() > 0;
+            await _userRepository.InsertAsync(user);
+            return true;
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            var user = _context.Users.Where(x => x.Id == id).FirstOrDefault();
+            var user = await _userRepository.GetByIdAsync(id);
             return user;
         }
         #region Private Methods
@@ -100,7 +93,6 @@ namespace BetEcommerce.Service.Implementation
                     if (computedHash[i] != storedHash[i]) return false;
                 }
             }
-
             return true;
         }
 

@@ -15,6 +15,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
     [ApiController]
     public class UserController : V1Controller
     {
+        //User Controller
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)

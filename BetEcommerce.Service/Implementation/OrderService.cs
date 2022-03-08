@@ -1,4 +1,7 @@
-﻿using BetEcommerce.Repository.Repository.EF;
+﻿using BetEcommerce.Repository.Cart;
+using BetEcommerce.Repository.Order;
+using BetEcommerce.Repository.Repository.EF;
+using BetEcommerce.Repository.User;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Text;
@@ -7,18 +10,24 @@ namespace BetEcommerce.Service.Implementation
 {
     public class OrderService : IOrderService
     {
-        private readonly BetEcommerceDBContext _context;
+        private readonly IOrderRepository _orderRepository;
+        private readonly ICartRepository _cartRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IOrderItemService _orderItemService;
         private readonly IEmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public OrderService(
-            BetEcommerceDBContext context,
+            IOrderRepository orderRepository,
+            ICartRepository cartRepository,
+            IUserRepository userRepository,
             IOrderItemService orderItemService,
             IEmailService emailService,
             IHttpContextAccessor httpContextAccessor
             )
         {
-            _context = context;
+            _orderRepository = orderRepository;
+            _cartRepository = cartRepository;
+            _userRepository = userRepository;
             _orderItemService = orderItemService;
             _emailService = emailService;
             _httpContextAccessor = httpContextAccessor;
@@ -27,27 +36,35 @@ namespace BetEcommerce.Service.Implementation
         {
             int userId = GetUserId();
 
-            var cart = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
+            var cart = _cartRepository.GetCartByUserId(userId);
 
             var orderRecord = new Order
             {
                 UserId = userId,
                 OrderNumber = $"1100{cart.Id}/2022",
             };
-            _context.Orders.Add(orderRecord);
-            await _context.SaveChangesAsync();
+
+            await _orderRepository.InsertAsync(orderRecord);
             var message = BuildMessage();
+
             await _orderItemService.MoveCartItemsToOrderItems(cart.Id, orderRecord.Id);
-            _context.Cart.Remove(cart);
-
-            await _context.SaveChangesAsync();
-
-            var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+            await _cartRepository.DeleteAsync(cart);
+            var user = await _userRepository.GetByIdAsync(userId);
 
             _emailService.SendEmailAsync(message, user.Email);
             return true;
         }
+        public string GetOrderNumber()
+        {
+            int userId = GetUserId();
+            return _orderRepository.GetOrderNumberByUserId(userId);
+        }
+        public int GetUserId()
+        {
+            return Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
+        }
 
+        #region Private Methods
         private string BuildMessage()
         {
             var orderItems = _orderItemService.GetOrderItems().Result;
@@ -66,14 +83,6 @@ namespace BetEcommerce.Service.Implementation
             message.Append($"<tr><td>TOTAL AMOUNT</td><td></td><td><b>{totalAmount}</b></td></tr></table>");
             return message.ToString();
         }
-        private string GetOrderNumber()
-        {
-            int userId = GetUserId();
-            return _context.Orders.Where(x => x.UserId == userId).FirstOrDefault()?.OrderNumber;
-        }
-        public int GetUserId()
-        {
-            return Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
-        }
+        #endregion
     }
 }

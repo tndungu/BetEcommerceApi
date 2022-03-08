@@ -1,50 +1,51 @@
 ﻿using BetEcommerce.Model.Request;
-using BetEcommerce.Model.Response;
+using BetEcommerce.Repository.Cart;
 using BetEcommerce.Repository.Helpers;
+using BetEcommerce.Repository.Product;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BetEcommerce.Service.Implementation
 {
     public class CartService : ICartService
     {
-        private readonly BetEcommerceDBContext _context;
+        private readonly IProductRepository _productRepository;
+        private readonly ICartRepository _cartRepository;
+        private readonly ICartItemRepository _cartItemRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICartItemService _cartItemService;
-        public CartService(BetEcommerceDBContext context,
+        public CartService(
+            IProductRepository productRepository,
+            ICartRepository cartRepository,
+            ICartItemRepository cartItemRepository,
             ICartItemService cartItemService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor
+            )
         {
-            _context = context;
+            _productRepository = productRepository;
+            _cartRepository = cartRepository;
             _cartItemService = cartItemService;
+            _cartItemRepository = cartItemRepository;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<int> AddToCart(CartRequest cart)
         {
-            var product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
+            var product = await _productRepository.GetByIdAsync(cart.ProductId);
             if (product == null)
                 throw new HttpException(HttpStatusCode.NotFound, "Product not found");
             
             int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
             int cartId = 0;
 
-            var cartExist = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
+            var cartExist = _cartRepository.GetCartByUserId(userId);
             if(cartExist == null)
             {
                 Cart cartAdd = new Cart();
                 cartAdd.UserId = userId;
-                _context.Cart.Add(cartAdd);
-                await _context.SaveChangesAsync();
+                _cartRepository.InsertAsync(cartAdd);
                 cartId = cartAdd.Id;
             }else
                 cartId = cartExist.Id;
@@ -56,7 +57,7 @@ namespace BetEcommerce.Service.Implementation
         {
             var cartId = GetCartId().Result;
             int sum = 0;
-            var cartItems = _context.CartItem.Where(x => x.CartId == cartId).ToList();
+            var cartItems = _cartItemRepository.GetCartItemsListByCartId(cartId);
             if (cartItems.Any())
             {
                 sum = cartItems.Sum(x => x.quantity);
@@ -68,7 +69,7 @@ namespace BetEcommerce.Service.Implementation
         {
             int cartId = 0;
             int userId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Identity.Name);
-            var res = _context.Cart.Where(x => x.UserId == userId).FirstOrDefault();
+            var res = _cartRepository.GetCartByUserId(userId);
             if(res != null)
                 cartId = res.Id;
                
@@ -80,20 +81,20 @@ namespace BetEcommerce.Service.Implementation
             int cartId = GetCartId().Result;
             if(cartId > 0)
             {
-                var cartItem = _context.CartItem.Where(x => x.CartId == cartId && x.ProductId == cart.ProductId).FirstOrDefault();
+                var cartItem = _cartItemRepository.GetCartItemByProductId(cartId, cart.ProductId);
                 if (cartItem != null)
                 {
-                    var product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
+                    var product = await _productRepository.GetByIdAsync(cart.ProductId);
                     if(product != null)
                     {
                         cartItem.quantity = cart.Quantity;
                         cartItem.UnitPrice = product.price;
                         cartItem.TotalPrice = product.price * cart.Quantity;
-                        _context.CartItem.Update(cartItem);
+                        _cartItemRepository.UpdateAsync(cartItem);
                     }
                 }
             }
-            return await _context.SaveChangesAsync() > 0;
+            return true;
         }
 
         public async Task<bool> RemoveCartItem(int productId)
@@ -101,13 +102,11 @@ namespace BetEcommerce.Service.Implementation
             int cartId = GetCartId().Result;
             if (cartId > 0)
             {
-                var cartItem = _context.CartItem.Where(x => x.CartId == cartId && x.ProductId == productId).FirstOrDefault();
+                var cartItem = _cartItemRepository.GetCartItemByProductId(cartId, productId);
                 if (cartItem != null)
-                {
-                    _context.CartItem.Remove(cartItem);
-                }
+                    await _cartItemRepository.DeleteAsync(cartItem);
             }
-            return await _context.SaveChangesAsync() > 0;
+            return true;
         }
     }
 }

@@ -1,31 +1,21 @@
 ﻿using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
-using BetEcommerce.Repository.Repository.EF;
+using BetEcommerce.Repository.Product;
 using BetEcommerce.Service.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BetEcommerce.Service.Implementation
 {
     public class ProductService : IProductService
     {
-        private readonly BetEcommerceDBContext _context;
-        public ProductService(BetEcommerceDBContext context)
+        private readonly IProductRepository _productRepository;
+        public ProductService(IProductRepository productRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
         }
         public async Task<ProductListViewModel> GetProducts(PointerParams @params)
         {
-            var products = await _context.Products
-                .OrderBy(x => x.Id)
-                .Where(x => x.Id > @params.Pointer)
-                .Take(@params.Count)
-                .ToListAsync();
+            var products = await _productRepository.GetPagedProductsList(@params);
 
             ProductListViewModel result = new()
             {
