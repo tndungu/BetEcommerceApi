@@ -8,7 +8,13 @@ namespace BetEcommerce.Model.Request
 {
     public class PointerParams
     {
-        public int Count { get; set; } = 50;
-        public int Pointer { get; set; } = 0;
+        private int _maxItemsPerPage = 10;
+        private int itemsPerPage;
+        public int Count 
+        { 
+            get => itemsPerPage; 
+            set => itemsPerPage = value > _maxItemsPerPage ? _maxItemsPerPage: value; 
+        }
+        public int Pointer { get; set; } = 1;
     }
 }
