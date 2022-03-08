@@ -9,10 +9,7 @@ namespace BetEcommerce.Service.Implementation
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        public ProductService(IProductRepository productRepository)
-        {
-            _productRepository = productRepository;
-        }
+        public ProductService(IProductRepository productRepository) => _productRepository = productRepository;
         public async Task<ProductListViewModel> GetProducts(PointerParams @params)
         {
             var products = await _productRepository.GetPagedProductsList(@params);
@@ -22,7 +19,6 @@ namespace BetEcommerce.Service.Implementation
                 NextPointer = products.Any() ? products.LastOrDefault()?.Id : -1,
                 Products = JsonConvert.DeserializeObject<List<ProductViewModel>>(JsonConvert.SerializeObject(products))
             };
-
             return result;
         }
     }

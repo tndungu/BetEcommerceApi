@@ -16,7 +16,8 @@ namespace BetEcommerce.Service.Implementation
         private readonly ICartItemRepository _cartItemRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICartItemService _cartItemService;
-        public CartService(
+        public CartService
+            (
             IProductRepository productRepository,
             ICartRepository cartRepository,
             ICartItemRepository cartItemRepository,

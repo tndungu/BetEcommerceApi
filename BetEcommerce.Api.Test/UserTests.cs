@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System.Net;
 
 namespace BetEcommerce.Api.Test
 {
@@ -18,8 +17,8 @@ namespace BetEcommerce.Api.Test
         [SetUp]
         public void Setup()
         {
-
         }
+
         [Test]
         public async Task should_Login()
         {
@@ -32,7 +31,7 @@ namespace BetEcommerce.Api.Test
             };
 
             UserServiceMock.Setup(x => x.Authenticate(It.IsAny<UserRequest>()))
-                .Returns(Task.Run(() => userResponse));
+                .ReturnsAsync(userResponse);
 
             var UserController = new UserController(UserServiceMock.Object);
 
@@ -45,8 +44,5 @@ namespace BetEcommerce.Api.Test
             Assert.IsNotNull(userData);
             Assert.AreEqual(JsonConvert.SerializeObject(userResponse), JsonConvert.SerializeObject(userData));
         }
-        
-
-
     }
 }

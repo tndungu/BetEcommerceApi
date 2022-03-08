@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Repository", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7ED89940-2FA9-4630-893E-780A39E82CD5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Api.Test", "BetEcommerce.Api.Test\BetEcommerce.Api.Test.csproj", "{088350A0-E5AF-4CBE-9B3B-3723A6249AEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Api.Tests", "BetEcommerce.Api.Test\BetEcommerce.Api.Tests.csproj", "{088350A0-E5AF-4CBE-9B3B-3723A6249AEB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Model", "BetEcommerce.Model\BetEcommerce.Model.csproj", "{1B75F238-12DA-4A66-9DE3-CCD4EF7D979F}"
 EndProject
@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Repository.Tests", "BetEcommerce.Repository.Tests\BetEcommerce.Repository.Tests.csproj", "{594055E4-0781-4BF5-B072-DD74E3C5051F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetEcommerce.Service.Tests", "BetEcommerce.Service.Tests\BetEcommerce.Service.Tests.csproj", "{0BEB94BF-5B14-4EC3-9D6C-75EE25690C69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetEcommerce.Service.Tests", "BetEcommerce.Service.Tests\BetEcommerce.Service.Tests.csproj", "{0BEB94BF-5B14-4EC3-9D6C-75EE25690C69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,12 +1,9 @@
 ﻿using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
-using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace BetEcommerce.Api.Controllers.API.V1
 {

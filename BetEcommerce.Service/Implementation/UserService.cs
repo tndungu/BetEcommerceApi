@@ -24,22 +24,29 @@ namespace BetEcommerce.Service.Implementation
 
         public async Task<UserResponse> Authenticate(UserRequest userRequest)
         {
-            var user = await _userRepository.FindUserByEmail(userRequest.Email);
-            if (user == null)
-                throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
-
-            bool valid = VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt);
-            if (!valid)
-                throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
-
-            var tokenString = new TokenGen().GenerateTokenJWT(user.Id, user.Id, _appSettings.Secret);
-
-            return new UserResponse
+            try
             {
-                Id = user.Id,
-                Email = user.Email,
-                Token = tokenString
-            };
+                var user = await _userRepository.FindUserByEmail(userRequest.Email);
+                if (user == null)
+                    throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
+
+                bool valid = VerifyPasswordHash(userRequest.Password, user.PasswordHash, user.PasswordSalt);
+                if (!valid)
+                    throw new HttpException(HttpStatusCode.Unauthorized, "Username or password incorrect");
+
+                var tokenString = new TokenGen().GenerateTokenJWT(user.Id, user.Id, _appSettings.Secret);
+
+                return new UserResponse
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Token = tokenString
+                };
+            }
+           catch(Exception ex)
+            {
+                throw ex;
+            }
         }
         public async Task<bool> Register(UserRequest userRequest)
         {
@@ -95,7 +102,6 @@ namespace BetEcommerce.Service.Implementation
             }
             return true;
         }
-
         #endregion
     }
 }

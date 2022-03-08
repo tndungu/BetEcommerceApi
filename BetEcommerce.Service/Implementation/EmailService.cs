@@ -9,10 +9,8 @@ namespace BetEcommerce.Service.Implementation
     public class EmailService : IEmailService
     {
         private readonly MailSettings _mailSettings;
-        public EmailService(IOptions<MailSettings> mailSettings)
-        {
-            _mailSettings = mailSettings.Value;
-        }
+        public EmailService(IOptions<MailSettings> mailSettings) => _mailSettings = mailSettings.Value;
+
         public async void SendEmailAsync(string message, string emailAddress)
         {
             MailMessage mail = new MailMessage()

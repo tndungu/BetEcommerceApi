@@ -3,30 +3,16 @@ using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BetEcommerce.Service.Implementation
 {
     public class OrderItemService : IOrderItemService
     {
         private readonly BetEcommerceDBContext _context;
-        
-        private readonly IEmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public OrderItemService(
-            BetEcommerceDBContext context,
-            
-            IEmailService emailService,
-            IHttpContextAccessor httpContextAccessor
-            )
+        public OrderItemService(BetEcommerceDBContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-            
-            _emailService = emailService;
             _httpContextAccessor = httpContextAccessor;
         }
         public async Task<List<CartResponse>> GetOrderItems()
