@@ -2,6 +2,7 @@
 using BetEcommerce.Model.API;
 using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
+using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -83,6 +84,24 @@ namespace BetEcommerce.Api.Test
 
             //Assert
             Assert.AreEqual(5, data.NextPointer);
+        }
+        [Test]
+        public async Task should_ThrowException_WhenParametersAreNull()
+        {
+            //Arrange 
+            var req = new PointerParams { Pointer = 1, Count = 10 };
+
+            ProductServiceMock.Setup(x => x.GetProducts(req))
+                .Throws(new HttpException(System.Net.HttpStatusCode.BadRequest));
+
+            var productController = new ProductController(ProductServiceMock.Object);
+
+            //Act
+            var result = await productController.GetProducts(req) as ObjectResult;
+            var res = result.Value as ApiResponse<bool>;
+
+            //Assert
+            Assert.AreNotEqual(200, res.statusCode);
         }
     }
 }
