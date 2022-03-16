@@ -13,10 +13,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
     public class ProductController : V1Controller
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
-        {
-            _productService = productService;
-        }
+        public ProductController(IProductService productService) => _productService = productService;
 
         [HttpPost("GetProducts")]
         [ProducesResponseType(typeof(ProductListViewModel), StatusCodes.Status200OK)]

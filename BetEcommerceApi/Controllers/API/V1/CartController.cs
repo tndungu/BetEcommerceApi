@@ -14,7 +14,6 @@ namespace BetEcommerce.Api.Controllers.API.V1
     {
         private readonly ICartService _cartService;
         private readonly ICartItemService _cartItemService;
-
         public CartController(ICartService cartService, ICartItemService cartItemService)
         {
             _cartService = cartService;
@@ -93,6 +92,5 @@ namespace BetEcommerce.Api.Controllers.API.V1
                 return betServerError(ex);
             }
         }
-
     }
 }
