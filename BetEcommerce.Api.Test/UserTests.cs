@@ -4,6 +4,7 @@ using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Service.Interfaces;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
@@ -63,7 +64,8 @@ namespace BetEcommerce.Api.Test
             var res = result.Value as ApiResponse<bool>;
 
             //Assert
-            Assert.AreNotEqual(200,res.statusCode);
+            //Assert.AreNotEqual(200,res.statusCode);
+            res.statusCode.Should().NotBe(200);
         }
 
         [Test]
@@ -82,7 +84,7 @@ namespace BetEcommerce.Api.Test
             var res = result.Value as ApiResponse<bool>;
 
             //Assert
-            Assert.AreEqual(true,res.data);
+            res.data.Should().Be(true);
         }
     }
 }

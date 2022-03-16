@@ -22,6 +22,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Authenticate([FromBody] UserRequest userRequest)
         {
             try
@@ -37,6 +38,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
 
         [AllowAnonymous]
         [HttpPost("Register")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<IActionResult> Register(UserRequest userRequest)
         {
             try

@@ -5,6 +5,7 @@ using BetEcommerce.Model.Response;
 using BetEcommerce.Repository.Helpers;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Interfaces;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
@@ -38,7 +39,7 @@ namespace BetEcommerce.Api.Test
                 NextPointer = 5,
                 Products = productList
             };
-                
+
             var req = new PointerParams { Pointer = 1, Count = 10 };
             ProductServiceMock.Setup(x => x.GetProducts(req))
                 .ReturnsAsync(productListView);
@@ -51,7 +52,7 @@ namespace BetEcommerce.Api.Test
             var data = response.data;
 
             //Assert
-            Assert.AreEqual(5, data.Products.Count);
+            data.Products.Should().HaveCount(5);
         }
         [Test]
         public async Task Should_Return_NextPointer_Value_Of_5()
@@ -83,7 +84,12 @@ namespace BetEcommerce.Api.Test
             var data = response.data;
 
             //Assert
-            Assert.AreEqual(5, data.NextPointer);
+            data.NextPointer.Should().Be(5);
+            //data.Products.Should().SatisfyRespectively(
+            //    first =>
+            //    {
+            //        first.Id.Should().Be(1);
+            //    });
         }
         [Test]
         public async Task should_ThrowException_WhenParametersAreNull()
@@ -101,7 +107,7 @@ namespace BetEcommerce.Api.Test
             var res = result.Value as ApiResponse<bool>;
 
             //Assert
-            Assert.AreNotEqual(200, res.statusCode);
+            res.statusCode.Should().NotBe(200);
         }
     }
 }

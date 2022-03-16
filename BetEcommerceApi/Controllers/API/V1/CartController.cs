@@ -3,9 +3,7 @@ using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BetEcommerce.Api.Controllers.API.V1
 {
@@ -23,6 +21,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
             _cartItemService = cartItemService;
         }
         [HttpPost("AddToCart")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         public async Task<IActionResult> AddToCart([FromBody] CartRequest Cart)
         {
             try
@@ -37,6 +36,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
         }
 
         [HttpGet("GetCartItems")]
+        [ProducesResponseType(typeof(CartResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCartItems()
         {
             try
@@ -50,6 +50,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
             }
         }
         [HttpGet("GetCartItemsCount")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCartItemsCount()
         {
             try
@@ -64,6 +65,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
         }
 
         [HttpPost("UpdateCart")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateCart([FromBody] CartRequest Cart)
         {
             try
@@ -78,6 +80,7 @@ namespace BetEcommerce.Api.Controllers.API.V1
         }
 
         [HttpPost("RemoveFromCart")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<IActionResult> RemoveFromCart([FromBody] int productId)
         {
             try

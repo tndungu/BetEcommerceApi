@@ -2,6 +2,7 @@
 using BetEcommerce.Repository.Product;
 using BetEcommerce.Repository.Repository.EF;
 using BetEcommerce.Service.Implementation;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -15,7 +16,6 @@ namespace BetEcommerce.Service.Tests
         [SetUp]
         public void SetUp()
         {
-            
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace BetEcommerce.Service.Tests
             var products = await _productService.GetProducts(pointerParams);
 
             //Assert
-            Assert.AreEqual(5, products.NextPointer);
+            products.NextPointer.Should().Be(5);
         }
     }
 }

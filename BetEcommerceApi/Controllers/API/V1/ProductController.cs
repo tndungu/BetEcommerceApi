@@ -3,8 +3,6 @@ using BetEcommerce.Model.Request;
 using BetEcommerce.Model.Response;
 using BetEcommerce.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetEcommerce.Api.Controllers.API.V1
